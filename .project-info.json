@@ -1,0 +1,20 @@
+{
+  "name": "revisao-espacada",
+  "title": "Revisão Espaçada",
+  "description": "Cartões de estudo com revisão baseada no histórico de respostas.",
+  "primary_language": "Kotlin",
+  "proposed_technologies": "Kotlin, Jetpack Compose e Room",
+  "status": "initial-core",
+  "github_created": false,
+  "application_implemented": true,
+  "planned_features": [
+    "Criar cartões e coleções",
+    "Agendar próxima revisão",
+    "Consultar acertos e cartões pendentes"
+  ],
+  "implemented_technologies": [
+    "Kotlin",
+    "Biblioteca padrão"
+  ],
+  "validation": "Consulte GitHub Actions"
+}
