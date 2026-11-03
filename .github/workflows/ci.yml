@@ -17,3 +17,6 @@ jobs:
           /tmp/kotlin-tools/kotlinc/bin/kotlinc Main.kt -include-runtime -d app.jar
       - name: Testar regras de domínio
         run: java -jar app.jar --self-test
+      - name: Validar CLI de revisões pendentes
+        run: |
+          java -jar app.jar --pendentes 2026-11-03 examples/cartoes.tsv | grep -F 'pendentes=2'
