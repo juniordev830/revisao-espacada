@@ -46,6 +46,20 @@ fun runDeckTests() {
     failure { deck.due(today, 0) }
     failure { deck.due(today, 1001) }
     failure { deck.search("x".repeat(101)) }
+    failure { deck.studyPlan(today, 0) }
+    failure { deck.studyPlan(today, 32) }
+    val planning = StudyDeck()
+    planning.add("late", "O que é atraso?", "Revisão pendente", today.minusDays(5))
+    planning.add("today", "O que é hoje?", "Revisão do dia", today)
+    planning.add("tomorrow", "O que vem depois?", "Amanhã", today.plusDays(1))
+    planning.add("later", "Quando revisar?", "Próximo mês", today.plusDays(20))
+    check(planning.studyPlan(today, 3) == listOf(
+        DailyReviewLoad(today, 2),
+        DailyReviewLoad(today.plusDays(1), 1),
+        DailyReviewLoad(today.plusDays(2), 0)
+    ))
+    check(planning.find("late").dueOn == today.minusDays(5))
+    check(StudyDeck().studyPlan(today, 1) == listOf(DailyReviewLoad(today, 0)))
     failure { deck.find("não-existe") }
     failure { deck.remove("não-existe") }
 
@@ -153,6 +167,8 @@ fun runDeckTests() {
         check(DeckStore.load(cliFile).find("card1").reviewCount == 1)
         runDeckCli(listOf(cliFile.toString(), "due", "2026-11-09"))
         runDeckCli(listOf(cliFile.toString(), "stats", "2026-11-09"))
+        runDeckCli(listOf(cliFile.toString(), "plan", "2026-11-09", "3"))
+        failure { runDeckCli(listOf(cliFile.toString(), "plan", "2026-11-09", "32")) }
         runDeckCli(listOf(cliFile.toString(), "search", "API"))
         runDeckCli(listOf(cliFile.toString(), "remove", "card1"))
         check(DeckStore.load(cliFile).all().isEmpty())
