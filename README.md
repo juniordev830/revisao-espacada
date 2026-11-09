@@ -63,3 +63,14 @@ A nova ferramenta de terminal não inclui interface gráfica, notificações, co
 ## Licença
 
 Ainda não definida.
+
+## Planejamento de revisões para os próximos dias
+
+O comando `plan` exibe quantos cartões estão previstos para cada dia de uma janela de **1 a 31 dias**, usando sete dias por padrão:
+
+```bash
+java -jar app.jar --deck baralho.local.tsv plan 2026-11-09
+java -jar app.jar --deck baralho.local.tsv plan 2026-11-09 14
+```
+
+Revisões atrasadas são contabilizadas no **primeiro dia** da janela. O planejamento é apenas uma consulta: não muda notas nem datas, não envia lembretes e não acessa serviços externos. Os testes verificam distribuição diária, atrasos e limites.
