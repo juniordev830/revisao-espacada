@@ -4,6 +4,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.Base64
 
 /**
@@ -27,6 +28,9 @@ data class DeckStats(
     val reviewCount: Int,
     val nextDue: LocalDate?
 )
+
+/** Expected review load, not a notification or an automatic reschedule. */
+data class DailyReviewLoad(val day: LocalDate, val count: Int)
 
 class StudyDeck(initial: Collection<StudyItem> = emptyList()) {
     private val cards = mutableMapOf<String, StudyItem>()
@@ -92,6 +96,24 @@ class StudyDeck(initial: Collection<StudyItem> = emptyList()) {
         return all().asSequence()
             .filter { !it.dueOn.isAfter(today) }
             .take(limit).toList()
+    }
+
+    /**
+     * Returns daily review counts for 1..31 consecutive days.
+     * Already-overdue cards are included on the first day, never silently lost.
+     * The forecast is read-only and leaves every due date unchanged.
+     */
+    fun studyPlan(start: LocalDate, days: Int = 7): List<DailyReviewLoad> {
+        require(days in 1..31) { "Plano deve cobrir de 1 a 31 dias" }
+        val counts = IntArray(days)
+        for (item in cards.values) {
+            val offset = ChronoUnit.DAYS.between(start, item.dueOn)
+            if (offset < days) {
+                val position = if (offset < 0) 0 else offset.toInt()
+                counts[position]++
+            }
+        }
+        return List(days) { i -> DailyReviewLoad(start.plusDays(i.toLong()), counts[i]) }
     }
 
     fun search(query: String): List<StudyItem> {
