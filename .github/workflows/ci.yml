@@ -14,6 +14,13 @@ jobs:
         run: |
           curl --fail --location --retry 2 -o kotlin.zip https://github.com/JetBrains/kotlin/releases/download/v2.1.0/kotlin-compiler-2.1.0.zip
           unzip -q kotlin.zip -d /tmp/kotlin-tools
-          /tmp/kotlin-tools/kotlinc/bin/kotlinc Main.kt -include-runtime -d app.jar
-      - name: Testar regras de domínio
+          /tmp/kotlin-tools/kotlinc/bin/kotlinc Main.kt Deck.kt DeckCli.kt DeckTests.kt -include-runtime -d app.jar
+      - name: Testar algoritmo original e novo baralho
         run: java -jar app.jar --self-test
+      - name: Verificar comandos de estudo
+        run: |
+          java -jar app.jar --deck "$RUNNER_TEMP/cards.tsv" add card-1 "O que é API?" "Interface de Programação" 2026-11-08
+          java -jar app.jar --deck "$RUNNER_TEMP/cards.tsv" due 2026-11-08 | grep -q "card-1"
+          java -jar app.jar --deck "$RUNNER_TEMP/cards.tsv" review card-1 5 2026-11-08
+          java -jar app.jar --deck "$RUNNER_TEMP/cards.tsv" stats 2026-11-09 | grep -q "Cartões: 1"
+

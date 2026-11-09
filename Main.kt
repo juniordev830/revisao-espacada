@@ -15,13 +15,18 @@ fun review(card: Card, grade: Int, today: LocalDate): Review {
 }
 fun main(args: Array<String>) {
     try {
+        if (args.firstOrNull() == "--deck") {
+            runDeckCli(args.drop(1))
+            return
+        }
         if (args.contentEquals(arrayOf("--self-test"))) {
             val date=LocalDate.parse("2026-01-01")
             check(review(Card(),5,date).next == date.plusDays(1))
             check(review(Card(1,1),5,date).card.interval == 6L)
             check(review(Card(20,3),0,date).card.streak == 0)
             check(runCatching { review(Card(),6,date) }.isFailure)
-            println("4 cenários OK"); return
+            runDeckTests()
+            println("4 cenários originais OK + testes do baralho"); return
         }
         require(args.size == 5) { "Uso: java -jar app.jar DATA NOTA INTERVALO SEQUENCIA FACILIDADE" }
         val result=review(Card(args[2].toLong(),args[3].toInt(),args[4].toDouble()),args[1].toInt(),LocalDate.parse(args[0]))
