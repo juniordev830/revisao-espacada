@@ -7,6 +7,7 @@ Comandos de estudo em Kotlin:
   java -jar app.jar --deck ARQUIVO edit ID "PERGUNTA" "RESPOSTA"
   java -jar app.jar --deck ARQUIVO review ID NOTA AAAA-MM-DD
   java -jar app.jar --deck ARQUIVO due AAAA-MM-DD [LIMITE]
+  java -jar app.jar --deck ARQUIVO plan AAAA-MM-DD [DIAS]
   java -jar app.jar --deck ARQUIVO search "TERMO"
   java -jar app.jar --deck ARQUIVO stats AAAA-MM-DD
   java -jar app.jar --deck ARQUIVO list
@@ -80,6 +81,14 @@ fun runDeckCli(args: List<String>) {
             val cards = deck.due(day, limit)
             println("Revisões pendentes: " + cards.size)
             cards.forEach(::show)
+        }
+        "plan" -> {
+            require(values.size in 1..2) { "Uso: plan AAAA-MM-DD [DIAS]" }
+            val start = LocalDate.parse(values[0])
+            val days = values.getOrNull(1)?.toInt() ?: 7
+            val forecast = deck.studyPlan(start, days)
+            println("Plano de revisão: $days dia(s)")
+            forecast.forEach { println("${it.day} | revisões=${it.count}") }
         }
         "search" -> {
             required(1)
