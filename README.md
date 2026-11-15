@@ -43,3 +43,14 @@ Licença: ainda não definida.
 ## Roteiro de qualidade
 
 Consulte o [guia de validação e manutenção](docs/GUIA_DE_VALIDACAO.md) para reproduzir testes, entender as limitações e revisar mudanças com segurança.
+
+
+## Simular várias revisões
+
+```sh
+java -jar app.jar --simular 2026-11-03 5,5,0,5
+```
+
+A simulação começa com um cartão novo. Cada nota é aplicada na próxima data sugerida pela etapa anterior; não representa um histórico de sessões realmente realizadas. A saída TSV informa etapa, nota, próxima data, intervalo em dias, sequência de acertos e fator de facilidade.
+
+Aceita entre 1 e 1000 notas inteiras de 0 a 5. Uma nota abaixo de 3 reinicia a sequência de acertos. `simulate(initial, grades, start)` permite escolher o estado inicial pela biblioteca, sem modificar o cartão recebido. O comando original para uma única revisão continua funcionando. Não há cadastro persistente de cartões ou garantia de resultado de aprendizagem.
