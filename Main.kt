@@ -26,6 +26,10 @@ fun simulate(initial: Card, grades: List<Int>, start: LocalDate): List<Review> {
 }
 fun main(args: Array<String>) {
     try {
+        if (args.firstOrNull() == "--deck") {
+            runDeckCli(args.drop(1))
+            return
+        }
         if (args.contentEquals(arrayOf("--self-test"))) {
             val date=LocalDate.parse("2026-01-01")
             check(review(Card(),5,date).next == date.plusDays(1))
@@ -42,7 +46,8 @@ fun main(args: Array<String>) {
             check(runCatching { simulate(Card(),emptyList(),date) }.isFailure)
             check(runCatching { simulate(Card(),listOf(5,6),date) }.isFailure)
             check(runCatching { simulate(Card(),List(1001){5},date) }.isFailure)
-            println("11 cenários OK"); return
+            runDeckTests()
+            println("11 cenários originais OK + testes do baralho"); return
         }
         if (args.firstOrNull() == "--simular") {
             require(args.size == 3) { "Uso: java -jar app.jar --simular DATA NOTAS_SEPARADAS_POR_VIRGULA" }
