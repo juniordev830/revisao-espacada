@@ -144,6 +144,10 @@ fun runDeckTests() {
         Files.deleteIfExists(temporaryDirectory)
     }
 
+    failure { DeckStore.parse("GX_STUDY_DECK_V1\n\n") }
+    failure { DeckStore.parse("GX_STUDY_DECK_V1\n\n" + DeckStore.render(deck).substringAfter('\n')) }
+    check(DeckStore.parse("GX_STUDY_DECK_V1\n").all().isEmpty())
+
     failure { DeckStore.parse("INVALID\n") }
     failure { DeckStore.parse("GX_STUDY_DECK_V1\nbad\tentry\n") }
     failure { StudyDeck(listOf(first, first)) }
