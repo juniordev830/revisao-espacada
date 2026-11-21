@@ -92,6 +92,10 @@ fun runDeckTests() {
     check(deck.stats(today.plusDays(7)).reviewCount == 3)
     check(deck.stats(today.plusDays(7)).mastered == 0)
 
+    failure { deck.add("invalid-control", "Pergunta\u0001X", "Resposta", today) }
+    failure { deck.add("invalid-del", "Pergunta", "Resposta\u007F", today) }
+    check(deck.all().none { it.id.startsWith("invalid-") })
+
     // Study text may contain tabs, newlines and Unicode; serialization preserves all.
     deck.add(
         "complex-1", "Pergunta\ncom linha e tab\t",
