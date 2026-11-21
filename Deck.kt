@@ -156,8 +156,14 @@ class StudyDeck(initial: Collection<StudyItem> = emptyList()) {
             require(item.answer.isNotBlank() && item.answer.length <= MAX_TEXT) {
                 "Resposta inválida"
             }
-            require(item.question.none { it == '\u0000' } &&
-                item.answer.none { it == '\u0000' }) { "Caracteres inválidos" }
+            // Allow human-readable multiline study cards, but no terminal control escapes.
+            fun safeText(text: String): Boolean = text.none { char ->
+                (char.code < 32 && char != '\n' && char != '\t' && char != '\r') ||
+                    char.code == 127
+            }
+            require(safeText(item.question) && safeText(item.answer)) {
+                "Caracteres inválidos"
+            }
             require(item.card.interval >= 0 && item.card.streak >= 0 &&
                 item.card.ease.isFinite() && item.card.ease >= 1.3
             ) { "Estado de revisão inválido" }
