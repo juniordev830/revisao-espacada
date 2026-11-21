@@ -219,8 +219,12 @@ object DeckStore {
         val lines = contents.lines()
         require(lines.firstOrNull() == HEADER) { "Versão de arquivo inválida" }
         val items = mutableListOf<StudyItem>()
-        for (line in lines.drop(1)) {
-            if (line.isEmpty()) continue
+        for ((index, line) in lines.drop(1).withIndex()) {
+            if (line.isEmpty()) {
+                // A single trailing newline is normal; blank rows in between are corruption.
+                require(index == lines.size - 2) { "Registro de cartão em branco" }
+                continue
+            }
             val fields = line.split('\t')
             require(fields.size == 9) { "Registro de cartão malformado" }
             val item = StudyItem(
