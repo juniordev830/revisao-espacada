@@ -92,6 +92,10 @@ fun runDeckTests() {
     check(deck.stats(today.plusDays(7)).reviewCount == 3)
     check(deck.stats(today.plusDays(7)).mastered == 0)
 
+    failure { deck.add("invalid-control", "Pergunta\u0001X", "Resposta", today) }
+    failure { deck.add("invalid-del", "Pergunta", "Resposta\u007F", today) }
+    check(deck.all().none { it.id.startsWith("invalid-") })
+
     // Study text may contain tabs, newlines and Unicode; serialization preserves all.
     deck.add(
         "complex-1", "Pergunta\ncom linha e tab\t",
@@ -139,6 +143,10 @@ fun runDeckTests() {
         Files.deleteIfExists(path.parent)
         Files.deleteIfExists(temporaryDirectory)
     }
+
+    failure { DeckStore.parse("GX_STUDY_DECK_V1\n\n") }
+    failure { DeckStore.parse("GX_STUDY_DECK_V1\n\n" + DeckStore.render(deck).substringAfter('\n')) }
+    check(DeckStore.parse("GX_STUDY_DECK_V1\n").all().isEmpty())
 
     failure { DeckStore.parse("INVALID\n") }
     failure { DeckStore.parse("GX_STUDY_DECK_V1\nbad\tentry\n") }

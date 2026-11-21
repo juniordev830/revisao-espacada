@@ -156,8 +156,14 @@ class StudyDeck(initial: Collection<StudyItem> = emptyList()) {
             require(item.answer.isNotBlank() && item.answer.length <= MAX_TEXT) {
                 "Resposta inválida"
             }
-            require(item.question.none { it == '\u0000' } &&
-                item.answer.none { it == '\u0000' }) { "Caracteres inválidos" }
+            // Allow human-readable multiline study cards, but no terminal control escapes.
+            fun safeText(text: String): Boolean = text.none { char ->
+                (char.code < 32 && char != '\n' && char != '\t' && char != '\r') ||
+                    char.code == 127
+            }
+            require(safeText(item.question) && safeText(item.answer)) {
+                "Caracteres inválidos"
+            }
             require(item.card.interval >= 0 && item.card.streak >= 0 &&
                 item.card.ease.isFinite() && item.card.ease >= 1.3
             ) { "Estado de revisão inválido" }
@@ -213,8 +219,12 @@ object DeckStore {
         val lines = contents.lines()
         require(lines.firstOrNull() == HEADER) { "Versão de arquivo inválida" }
         val items = mutableListOf<StudyItem>()
-        for (line in lines.drop(1)) {
-            if (line.isEmpty()) continue
+        for ((index, line) in lines.drop(1).withIndex()) {
+            if (line.isEmpty()) {
+                // A single trailing newline is normal; blank rows in between are corruption.
+                require(index == lines.size - 2) { "Registro de cartão em branco" }
+                continue
+            }
             val fields = line.split('\t')
             require(fields.size == 9) { "Registro de cartão malformado" }
             val item = StudyItem(
