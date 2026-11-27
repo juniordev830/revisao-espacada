@@ -216,7 +216,7 @@ object DeckStore {
         require(contents.toByteArray(StandardCharsets.UTF_8).size <= MAX_BYTES) {
             "Baralho ultrapassa 1 MB"
         }
-        val lines = contents.lines()
+        val lines = contents.removePrefix("\uFEFF").lines()
         require(lines.firstOrNull() == HEADER) { "Versão de arquivo inválida" }
         val items = mutableListOf<StudyItem>()
         for ((index, line) in lines.drop(1).withIndex()) {
