@@ -1,8 +1,10 @@
 # Revisão Espaçada — Kotlin
 
+**Navegação** · [Baralho e revisão](#baralho-e-revisão) · [Requisitos](#requisitos) · [Criar e revisar cartões](#criar-e-revisar-cartões) · [Código e estudo](docs/ENGENHARIA_REVERSA.md)
+
 Ferramenta de estudo baseada em repetição espaçada com algoritmo de revisão em Kotlin e um **baralho local persistente**. O algoritmo original e seus comandos permanecem disponíveis.
 
-## Novo nesta branch
+## Baralho e revisão
 
 - Criação, edição, consulta e exclusão de cartões de pergunta e resposta.
 - Revisão por nota de 0 a 5, reaproveitando o algoritmo original de intervalo, sequência e facilidade.
@@ -83,6 +85,12 @@ java -jar app.jar --simular 2026-11-03 5,5,0,5
 
 A simulação começa com um cartão novo. Cada nota é aplicada na próxima data sugerida pela etapa anterior; não representa um histórico de sessões realmente realizadas. A saída TSV informa etapa, nota, próxima data, intervalo em dias, sequência de acertos e fator de facilidade.
 
-Aceita entre 1 e 1000 notas inteiras de 0 a 5. Uma nota abaixo de 3 reinicia a sequência de acertos. `simulate(initial, grades, start)` permite escolher o estado inicial pela biblioteca, sem modificar o cartão recebido. O comando original para uma única revisão continua funcionando. Não há cadastro persistente de cartões ou garantia de resultado de aprendizagem.
+Aceita entre 1 e 1000 notas inteiras de 0 a 5. Uma nota abaixo de 3 reinicia a sequência de acertos. `simulate(initial, grades, start)` permite escolher o estado inicial pela biblioteca, sem modificar o cartão recebido. O comando original para uma única revisão continua funcionando. A simulação mantém o baralho intacto e seus resultados servem para comparar sequências de notas.
 
 Perguntas e respostas podem conter acentos, tabulações e quebras de linha, mas não caracteres de controle como `ESC` ou `DEL`, evitando que cartões forjem comandos de terminal. Ao restaurar TSV, linhas vazias no meio do arquivo são interpretadas como dados corrompidos; somente a quebra final normal é aceita.
+
+## Código e roteiro de estudo
+
+Como manter uma revisão com nota baixa consistente com o reinício da sequência e o cálculo da próxima data? O [guia de engenharia reversa](docs/ENGENHARIA_REVERSA.md) reúne o mapa dos módulos e uma pergunta técnica baseada no projeto.
+
+Mantido por [João Junior](https://github.com/juniordev830).
